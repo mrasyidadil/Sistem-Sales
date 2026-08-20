@@ -1,0 +1,2370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SalesPurp - Enterprise Sales & Marketing Suite</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* ==========================================
+           1. RESET & VARIABLE THEME
+           ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        :root {
+            --primary: #8a2be2;
+            --primary-light: #f0e6ff;
+            --primary-dark: #5c068c;
+            --accent: #9370db;
+            --bg-light: #f8f6ff;
+            --surface: #ffffff;
+            --text-dark: #2d2d3a;
+            --text-muted: #6c6c80;
+            --danger: #dc3545;
+            --success: #28a745;
+            --warning: #ffc107;
+            --shadow: 0 8px 20px rgba(138, 43, 226, 0.08);
+            --radius: 12px;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ==========================================
+           2. BUTTONS & UI COMPONENTS
+           ========================================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+        }
+
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3); }
+        .btn-secondary { background-color: var(--primary-light); color: var(--primary-dark); }
+        .btn-secondary:hover { background-color: #e2d2fe; }
+        .btn-danger { background-color: #ffe6e6; color: var(--danger); }
+        .btn-danger:hover { background-color: #ffd1d1; }
+        .btn-success { background-color: #d4edda; color: var(--success); }
+        .btn-success:hover { background-color: #c3e6cb; }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-superadmin { background-color: #ffd700; color: #5a4300; }
+        .badge-admin { background-color: var(--primary-light); color: var(--primary-dark); }
+        .badge-active { background-color: #d4edda; color: var(--success); }
+        .badge-inactive { background-color: #f8d7da; color: var(--danger); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--surface);
+            padding: 1.2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary);
+        }
+
+        .stat-card .title { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+        .stat-card .value { font-size: 1.4rem; font-weight: 700; color: var(--primary-dark); margin-top: 4px; }
+
+        /* ==========================================
+           3. LOGIN OVERLAY & MODALS
+           ========================================== */
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; padding: 20px;
+        }
+
+        .login-card {
+            background-color: var(--surface);
+            padding: 2.5rem; border-radius: 16px;
+            width: 100%; max-width: 420px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none; align-items: center; justify-content: center;
+            z-index: 10000; padding: 20px;
+        }
+        .modal-card {
+            background-color: var(--surface);
+            padding: 2rem; border-radius: 16px;
+            width: 100%; max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* ==========================================
+           4. LAYOUT & SIDEBAR
+           ========================================== */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1rem 5%; background-color: var(--surface);
+            box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100;
+        }
+
+        .logo { font-size: 1.3rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+
+        .main-layout {
+            display: flex; max-width: 1350px;
+            margin: 1.5rem auto; padding: 0 1rem; gap: 1.5rem;
+        }
+
+        .sidebar {
+            width: 260px; background-color: var(--surface);
+            border-radius: var(--radius); padding: 1.2rem;
+            box-shadow: var(--shadow); height: fit-content;
+        }
+
+        .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        .sidebar-menu li a {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px; border-radius: 8px;
+            color: var(--text-dark); text-decoration: none;
+            font-weight: 500; font-size: 0.88rem; cursor: pointer;
+        }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active {
+            background-color: var(--primary-light); color: var(--primary-dark);
+        }
+
+        .content-area { flex: 1; }
+        .card {
+            background-color: var(--surface);
+            border-radius: var(--radius); padding: 1.5rem;
+            box-shadow: var(--shadow); margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.2rem; padding-bottom: 0.6rem;
+            border-bottom: 1.5px solid var(--primary-light);
+        }
+
+        .card-title { font-size: 1.1rem; color: var(--primary-dark); display: flex; align-items: center; gap: 10px; }
+
+        /* ==========================================
+           5. FORM & TABLE STYLES
+           ========================================== */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.3rem; font-weight: 500; font-size: 0.85rem; }
+        .form-control {
+            width: 100%; padding: 9px 12px;
+            border: 1.5px solid #e0e0e0; border-radius: 8px;
+            font-size: 0.88rem; outline: none;
+        }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.12); }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+        th, td { padding: 10px 12px; border-bottom: 1px solid #eef0f6; vertical-align: middle; }
+        th { background-color: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+
+        .password-toggle-wrapper { display: flex; align-items: center; gap: 8px; }
+        .pass-text { font-family: monospace; font-size: 0.9rem; letter-spacing: 1px; }
+        .btn-icon { background: none; border: none; cursor: pointer; color: var(--primary-dark); font-size: 0.9rem; }
+
+        .announce-banner {
+            background: linear-gradient(135deg, #e6f0ff, #f0e6ff);
+            border: 1.5px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 1rem; margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .sidebar-menu { flex-direction: row; overflow-x: auto; }
+            .sidebar-menu li a { white-space: nowrap; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SYSTEM OVERLAY -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card">
+            <div class="logo" style="justify-content: center; margin-bottom: 1rem; font-size: 1.8rem;">
+                <i class="fa-solid fa-chart-line"></i> SalesPurp
+            </div>
+            <h2>Portal Admin & Sales</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Silakan login untuk mengakses sistem</p>
+            
+            <form id="loginForm" autocomplete="off">
+                <div class="form-group" style="text-align: left;">
+                    <label>Pilih Akun Login Demo</label>
+                    <select id="loginSelectAccount" class="form-control" onchange="autoFillLogin()"></select>
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Email Pengguna</label>
+                    <input type="email" id="loginEmail" class="form-control" required readonly style="background-color: #f5f5f5;">
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Kata Sandi</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="Masukkan password" autocomplete="new-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Masuk ke Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT ADMIN -->
+    <div class="modal-overlay" id="editUserModal">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="color: var(--primary-dark);"><i class="fa-solid fa-user-pen"></i> Edit Akun Pengguna</h3>
+                <button onclick="closeEditModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="editUserForm" autocomplete="off">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="editUserNama" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Login</label>
+                    <input type="email" id="editUserEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Ubah Kata Sandi Baru <span style="font-size:0.75rem; color: var(--text-muted);">(Kosongkan jika tidak diubah)</span></label>
+                    <input type="password" id="editUserPass" class="form-control" placeholder="Masukkan kata sandi baru" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Role Access</label>
+                    <select id="editUserRole" class="form-control" required>
+                        <option value="Admin">Admin / Sales</option>
+                        <option value="Superadmin">Superadmin</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Batal</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- NAVBAR UTAMA -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-chart-line"></i> SalesPurp Admin
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="text-align: right;">
+                <div style="font-weight: 600; font-size: 0.88rem;" id="navUserName">-</div>
+                <span class="badge" id="navUserBadge">-</span>
+            </div>
+            <button class="btn btn-danger" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+        </div>
+    </nav>
+
+    <!-- LAYANAN UTAMA DASHBOARD -->
+    <div class="main-layout">
+        
+        <!-- SIDEBAR MENU -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a onclick="switchTab('profileTab')" id="menu-profileTab" class="active"><i class="fa-solid fa-user-gear"></i> Profil Pengguna</a></li>
+                <li><a onclick="switchTab('absenTab')" id="menu-absenTab"><i class="fa-solid fa-location-dot"></i> Absen Kunjungan</a></li>
+                <li><a onclick="switchTab('produkTab')" id="menu-produkTab"><i class="fa-solid fa-boxes-stacked"></i> Produk & Dokumen</a></li>
+                <li><a onclick="switchTab('orderanTab')" id="menu-orderanTab"><i class="fa-solid fa-cart-shopping"></i> PO & Orderan</a></li>
+                <li><a onclick="switchTab('biayaTab')" id="menu-biayaTab"><i class="fa-solid fa-receipt"></i> Biaya Lain-lain</a></li>
+                <li><a onclick="switchTab('rekapDealTab')" id="menu-rekapDealTab"><i class="fa-solid fa-file-invoice-dollar"></i> Rekap Toko Deal</a></li>
+                <li><a onclick="switchTab('aktivitasTab')" id="menu-aktivitasTab"><i class="fa-solid fa-list-check"></i> Log Aktivitas Sales</a></li>
+                
+                <!-- MENU KHUSUS SUPERADMIN -->
+                <li class="superadmin-only"><a onclick="switchTab('announceTab')" id="menu-announceTab"><i class="fa-solid fa-bullhorn"></i> Announcement</a></li>
+                <li class="superadmin-only"><a onclick="switchTab('superLogTab')" id="menu-superLogTab"><i class="fa-solid fa-user-shield"></i> Log Superadmin</a></li>
+                <li class="superadmin-only"><a onclick="switchTab('manageAdminTab')" id="menu-manageAdminTab"><i class="fa-solid fa-users-gear"></i> Kelola Admin</a></li>
+                <li class="superadmin-only"><a onclick="switchTab('pengaturanTab')" id="menu-pengaturanTab"><i class="fa-solid fa-sliders"></i> Pengaturan Stok PO</a></li>
+            </ul>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <main class="content-area">
+
+            <!-- BANNER ANNOUNCEMENT -->
+            <div class="announce-banner" id="announcementDisplay" style="display: none;">
+                <div style="font-weight: 700; color: var(--primary-dark); font-size: 0.95rem;">
+                    <i class="fa-solid fa-bullhorn"></i> Pengumuman Penting (<span id="annTargetDisplay">Semua Team</span>):
+                </div>
+                <div id="annTextDisplay" style="margin-top: 5px; font-size: 0.9rem;">-</div>
+            </div>
+
+            <!-- PROFIL PENGGUNA -->
+            <section id="profileTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-address-card"></i> Profil Pengguna</h2>
+                    </div>
+                    <form id="profileForm" autocomplete="off">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Nama Lengkap</label>
+                                <input type="text" id="profNama" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="profEmail" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Nomor Telepon</label>
+                                <input type="tel" id="profTelp" class="form-control" value="081234567890" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Jabatan</label>
+                                <input type="text" id="profJabatan" class="form-control" value="Sales Representative" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Alamat Lengkap</label>
+                            <input type="text" id="profAlamat" class="form-control" value="Jl. Sudirman No. 45" required>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Kota</label>
+                                <input type="text" id="profKota" class="form-control" value="Jambi" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Kode Pos</label>
+                                <input type="text" id="profKodePos" class="form-control" value="36138" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Profil</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ABSEN KUNJUNGAN -->
+            <section id="absenTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-map-location-dot"></i> Form Absen Kunjungan Toko</h2>
+                    </div>
+                    <form id="absenForm">
+                        <div class="grid-3">
+                            <div class="form-group">
+                                <label>Nama Sales</label>
+                                <input type="text" id="absenNamaSales" class="form-control" readonly required>
+                            </div>
+                            <div class="form-group">
+                                <label>Kategori Absen</label>
+                                <select id="absenKategori" class="form-control" required>
+                                    <option value="Absen Masuk">Absen Masuk</option>
+                                    <option value="Kunjungan Toko Routine">Kunjungan Toko Routine</option>
+                                    <option value="Penawaran Produk Baru">Penawaran Produk Baru</option>
+                                    <option value="Penagihan / Collection">Penagihan / Collection</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Nama Toko Target</label>
+                                <input type="text" id="absenNamaToko" class="form-control" placeholder="Contoh: Toko Jaya Abadi" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Planning / Rencana Kunjungan</label>
+                            <input type="text" id="absenPlaning" class="form-control" placeholder="Jelaskan detail tujuan kunjungan" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>GPS Location</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="absenGps" class="form-control" placeholder="Klik tombol untuk koordinat GPS" readonly required>
+                                <button type="button" class="btn btn-secondary" onclick="getGPSLocation()"><i class="fa-solid fa-crosshairs"></i> Get GPS</button>
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Attachment File (Dokumen/Nota)</label>
+                                <input type="file" id="absenAttachment" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>Live Photo (Foto Kunjungan)</label>
+                                <input type="file" id="absenLivePhoto" class="form-control" accept="image/*" capture="camera" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;"><i class="fa-solid fa-paper-plane"></i> Send / Kirim Absen</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- PRODUK & DOKUMEN -->
+            <section id="produkTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-boxes-stacked"></i> Katalog Produk Tersedia</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama Produk</th>
+                                    <th>Stok Tersedia</th>
+                                    <th>Harga / Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="produkCatalogBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-folder-open"></i> Dokumen & Modul Sales</h2>
+                    </div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <span><i class="fa-solid fa-file-pdf" style="color:red;"></i> Brosur Catalog Produk 2026.pdf</span>
+                            <button class="btn btn-secondary" onclick="alert('Mengunduh dokumen...')"><i class="fa-solid fa-download"></i> Unduh</button>
+                        </li>
+                        <li style="padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <span><i class="fa-solid fa-file-word" style="color:blue;"></i> Template Form Perjanjian Kerjasama Toko.docx</span>
+                            <button class="btn btn-secondary" onclick="alert('Mengunduh dokumen...')"><i class="fa-solid fa-download"></i> Unduh</button>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ORDERAN, BUKTI PO & PEMBATALAN PO -->
+            <section id="orderanTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-cart-plus"></i> Input PO Masuk Baru</h2>
+                    </div>
+                    <form id="orderForm">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Pilih Produk (Terkoneksi Pengaturan Stok)</label>
+                                <select id="ordNamaProduk" class="form-control" onchange="updateMaxQtyLabel()" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Jumlah Order (Qty) <span id="qtyMaxLabel" style="color:var(--text-muted); font-size:0.75rem;"></span></label>
+                                <input type="number" id="ordJumlah" class="form-control" min="1" placeholder="0" required>
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Nama Toko / Client</label>
+                                <input type="text" id="ordNamaToko" class="form-control" placeholder="Contoh: Toko Berkah" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Alamat Toko</label>
+                                <input type="text" id="ordAlamatToko" class="form-control" placeholder="Contoh: Jl. Merdeka No. 12, Jambi" required>
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Tanggal Order</label>
+                                <input type="date" id="ordTgl" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Nama Sales</label>
+                                <input type="text" id="ordNamaSales" class="form-control" readonly required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Foto Produk / Bukti PO</label>
+                            <input type="file" id="ordFotoProduk" class="form-control" accept="image/*" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Submit PO & Simpan ke Spreadsheet</button>
+                    </form>
+                </div>
+
+                <!-- DAFTAR PO MASUK ACTIVE -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="font-size: 1rem;"><i class="fa-solid fa-list-check"></i> Daftar PO Masuk Active</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Toko</th>
+                                    <th>Alamat Toko</th>
+                                    <th>Produk</th>
+                                    <th>Jumlah</th>
+                                    <th>Total Rupiah</th>
+                                    <th>Tgl Order</th>
+                                    <th>Sales</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="poTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- DAFTAR PEMBATALAN PO -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="font-size: 1rem; color: var(--danger);"><i class="fa-solid fa-ban"></i> Daftar Pembatalan PO</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Toko</th>
+                                    <th>Alamat Toko</th>
+                                    <th>Nama Produk</th>
+                                    <th>Jumlah Batal</th>
+                                    <th>Tgl Pembatalan</th>
+                                    <th>Sales</th>
+                                    <th>Keterangan / Alasan Batal</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="batalTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BIAYA LAIN-LAIN -->
+            <section id="biayaTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-receipt"></i> Input Biaya Lain-lain</h2>
+                    </div>
+                    <form id="biayaForm">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Kategori Biaya Operasional</label>
+                                <select id="biayaKategori" class="form-control" required>
+                                    <option value="Beli Bensin">Beli Bensin</option>
+                                    <option value="Parkir">Parkir</option>
+                                    <option value="Tol">Tol</option>
+                                    <option value="Tiket Pesawat">Tiket Pesawat</option>
+                                    <option value="Tiket Kapal">Tiket Kapal</option>
+                                    <option value="Tiket Bus">Tiket Bus</option>
+                                    <option value="Sewa Motor">Sewa Motor</option>
+                                    <option value="Sewa Mobil">Sewa Mobil</option>
+                                    <option value="Lain-lain">Lain-lain</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tanggal Transaksi</label>
+                                <input type="date" id="biayaTgl" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Biaya / Unit (Rp)</label>
+                                <input type="number" id="biayaNominal" class="form-control" min="0" placeholder="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Bukti Struk/Nota</label>
+                                <input type="file" id="biayaBukti" class="form-control" accept="image/*" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Keterangan Tambahan</label>
+                            <input type="text" id="biayaKet" class="form-control" placeholder="Contoh: Perjalanan dinas ke Muaro Jambi">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Simpan Transaksi Biaya</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="font-size: 1rem;"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pengeluaran Biaya Lain</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Kategori</th>
+                                    <th>Nominal (Rp)</th>
+                                    <th>Keterangan</th>
+                                    <th>Bukti</th>
+                                    <th>Sales</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="biayaTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- REKAP TOKO DEAL TRANSAKSI -->
+            <section id="rekapDealTab" class="tab-content" style="display: none;">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="title">Total Akumulasi Transaksi Keseluruhan</div>
+                        <div class="value" id="rekapTotalRupiah">Rp 0</div>
+                    </div>
+                    <div class="stat-card" style="border-left-color: var(--success);">
+                        <div class="title">Total Toko Deal</div>
+                        <div class="value" id="rekapTotalToko">0 Toko</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title" style="font-size: 1rem;"><i class="fa-solid fa-chart-line"></i> Grafik Penjualan Keseluruhan</h3>
+                        </div>
+                        <div id="chartPenjualanKeseluruhan" style="width: 100%; height: 280px;"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title" style="font-size: 1rem;"><i class="fa-solid fa-chart-bar"></i> Grafik Penjualan Per Admin / Sales</h3>
+                        </div>
+                        <div id="chartPenjualanPerSales" style="width: 100%; height: 280px;"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-file-invoice-dollar"></i> Rincian Rekap Toko Deal Per Toko</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama Toko</th>
+                                    <th>Alamat Toko</th>
+                                    <th>Jumlah Deal (Rupiah)</th>
+                                    <th>Total Barang (Qty)</th>
+                                    <th>Nama Sales Penanggung Jawab</th>
+                                    <th>Last Update</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rekapDealBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- LOG AKTIVITAS TIM SALES -->
+            <section id="aktivitasTab" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Log Aktivitas Tim Sales</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Jam</th>
+                                    <th>Nama Sales</th>
+                                    <th>Kategori / Aktivitas</th>
+                                    <th>Nama Toko</th>
+                                    <th>GPS Location</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salesLogTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FEATURE ANNOUNCEMENT (SUPERADMIN) -->
+            <section id="announceTab" class="tab-content superadmin-only" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-bullhorn"></i> Buat Pengumuman / Instruksi</h2>
+                    </div>
+                    <form id="announceForm">
+                        <div class="form-group">
+                            <label>Target Penerima Arahan</label>
+                            <select id="annTarget" class="form-control" required>
+                                <option value="Semua Team">Semua Team Sales</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Pesan Arahan / Pengumuman</label>
+                            <textarea id="annText" class="form-control" rows="3" placeholder="Tulis instruksi kerja di sini..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Publikasikan Pengumuman</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- LOG AKTIVITAS SUPERADMIN -->
+            <section id="superLogTab" class="tab-content superadmin-only" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title" style="color: var(--primary-dark);"><i class="fa-solid fa-user-shield"></i> Log Aktivitas Khusus Superadmin</h2>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Jam</th>
+                                    <th>Superadmin</th>
+                                    <th>Toko / Objek Terkait</th>
+                                    <th>GPS Location</th>
+                                    <th>Detail Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="superLogTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KELOLA ADMIN & SUPERADMIN -->
+            <section id="manageAdminTab" class="tab-content superadmin-only" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-user-plus"></i> Tambah Admin / Sales Baru</h2>
+                    </div>
+                    <form id="newAdminForm" autocomplete="off">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Nama Lengkap</label>
+                                <input type="text" id="newAdminNama" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Login</label>
+                                <input type="email" id="newAdminEmail" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Password Akun Baru</label>
+                                <input type="password" id="newAdminPass" class="form-control" placeholder="Masukkan password kuat" autocomplete="new-password" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Role Access</label>
+                                <select id="newAdminRole" class="form-control" required>
+                                    <option value="Admin">Admin / Sales</option>
+                                    <option value="Superadmin">Superadmin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-user-check"></i> Buat Akun Baru</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="font-size: 1rem;"><i class="fa-solid fa-users"></i> Daftar Akun Pengguna & Kontrol Akses</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Password</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Aksi Kontrol Superadmin</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userManagementBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PENGATURAN STOK PRODUK -->
+            <section id="pengaturanTab" class="tab-content superadmin-only" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-sliders"></i> Pengaturan Produk & Stok</h2>
+                    </div>
+                    <form id="addProductForm">
+                        <input type="hidden" id="editProductId" value="">
+                        <div class="grid-3">
+                            <div class="form-group">
+                                <label>Nama Produk Baru</label>
+                                <input type="text" id="pNama" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Jumlah Stok Barang</label>
+                                <input type="number" id="pStok" class="form-control" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Harga Per Barang (Rupiah)</label>
+                                <input type="number" id="pHarga" class="form-control" min="0" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="productSubmitBtn"><i class="fa-solid fa-plus"></i> Tambah Produk</button>
+                        <button type="button" class="btn btn-secondary" id="productCancelEditBtn" style="display:none;margin-left:8px;" onclick="cancelProductEdit()"><i class="fa-solid fa-xmark"></i> Batal Edit</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title" style="font-size: 1rem;"><i class="fa-solid fa-boxes-packing"></i> Stok Produk Terkini</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama Produk</th>
+                                    <th>Jumlah Stok</th>
+                                    <th>Harga Per Unit</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="settingProductBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL EDIT BIAYA LAIN-LAIN -->
+    <div class="modal-overlay" id="editBiayaModal">
+        <div class="modal-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h3 style="color:var(--primary-dark);">
+                    <i class="fa-solid fa-receipt"></i> Edit Biaya Lain-lain
+                </h3>
+                <button type="button" onclick="closeEditBiayaModal()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="editBiayaForm" autocomplete="off">
+                <input type="hidden" id="editBiayaId">
+
+                <div class="form-group">
+                    <label>Kategori Biaya Operasional</label>
+                    <select id="editBiayaKategori" class="form-control" required>
+                        <option value="Beli Bensin">Beli Bensin</option>
+                        <option value="Parkir">Parkir</option>
+                        <option value="Tol">Tol</option>
+                        <option value="Tiket Pesawat">Tiket Pesawat</option>
+                        <option value="Tiket Kapal">Tiket Kapal</option>
+                        <option value="Tiket Bus">Tiket Bus</option>
+                        <option value="Sewa Motor">Sewa Motor</option>
+                        <option value="Sewa Mobil">Sewa Mobil</option>
+                        <option value="Lain-lain">Lain-lain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tanggal Transaksi</label>
+                    <input type="date" id="editBiayaTgl" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Biaya / Unit (Rp)</label>
+                    <input type="number" id="editBiayaNominal" class="form-control" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Keterangan Tambahan</label>
+                    <input type="text" id="editBiayaKet" class="form-control" placeholder="Keterangan biaya">
+                </div>
+
+                <div class="form-group">
+                    <label>Ganti Bukti Struk/Nota <span style="font-size:.75rem;color:var(--text-muted);">(Opsional)</span></label>
+                    <input type="file" id="editBiayaBukti" class="form-control" accept="image/*">
+                </div>
+
+                <div id="editBiayaPreview" style="margin-top:.5rem;"></div>
+
+                <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditBiayaModal()">Batal</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let users = [
+            { id: 1, nama: "Budi Santoso", email: "superadmin@sales.com", password: "SuperSecret#2026", role: "Superadmin", active: true },
+            { id: 2, nama: "Siti Rahma", email: "siti@sales.com", password: "SalesSecure#2026", role: "Admin", active: true }
+        ];
+
+        let currentUser = null;
+
+        let products = [
+            { id: 101, nama: "Kopi Instan Premium 500g", stok: 150, harga: 25000 },
+            { id: 102, nama: "Minyak Goreng Pouch 2L", stok: 80, harga: 34000 },
+            { id: 103, nama: "Sabun Cuci Cair 800ml", stok: 200, harga: 18500 }
+        ];
+
+        let announcement = { target: "Semua Team", text: "Target pencapaian omset bulan ini naik 10%!" };
+        let salesLogs = [];
+        let superadminLogs = [];
+        let poOrders = [];
+        let cancelledOrders = [];
+        let biayaLogs = [];
+
+        function renderLoginSelectOptions() {
+            const selectEl = document.getElementById('loginSelectAccount');
+            const targetEl = document.getElementById('annTarget');
+            if (!selectEl) return;
+
+            selectEl.innerHTML = '';
+            if (targetEl) targetEl.innerHTML = '<option value="Semua Team">Semua Team Sales</option>';
+            
+            users.forEach(u => {
+                if (u.active) {
+                    const option = document.createElement('option');
+                    option.value = u.email;
+                    option.textContent = `${u.role} (${u.nama})`;
+                    selectEl.appendChild(option);
+
+                    if (targetEl) {
+                        const tOpt = document.createElement('option');
+                        tOpt.value = u.nama;
+                        tOpt.textContent = `Sales Spesifik: ${u.nama}`;
+                        targetEl.appendChild(tOpt);
+                    }
+                }
+            });
+
+            autoFillLogin();
+        }
+
+        function autoFillLogin() {
+            const selectedEmail = document.getElementById('loginSelectAccount').value;
+            const loginInput = document.getElementById('loginEmail');
+            if (loginInput && selectedEmail) {
+                loginInput.value = selectedEmail;
+            }
+        }
+
+        function loadUsersFromSheets() {
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.withSuccessHandler(data => {
+                    if (data && data.length > 0) users = data;
+                    renderUserManagement();
+                    renderLoginSelectOptions();
+                }).getUsers();
+            } else {
+                const savedUsers = localStorage.getItem('salespurp_users');
+                if (savedUsers) {
+                    try { users = JSON.parse(savedUsers); } catch (err) {}
+                }
+                renderUserManagement();
+                renderLoginSelectOptions();
+            }
+        }
+
+        // ==========================================
+        // SINKRONISASI DATA TRANSAKSI DARI GOOGLE SHEETS
+        // ==========================================
+        // Helper: bungkus google.script.run menjadi Promise agar bisa dipakai
+        // dengan async/await dan Promise.all (memuat banyak data sekaligus).
+        function gsRun(functionName, ...args) {
+            return new Promise((resolve, reject) => {
+                if (typeof google === 'undefined' || !google.script || !google.script.run
+                    || typeof google.script.run[functionName] !== 'function') {
+                    reject(new Error(`Fungsi server "${functionName}" tidak tersedia (mode lokal/offline).`));
+                    return;
+                }
+                google.script.run
+                    .withSuccessHandler(resolve)
+                    .withFailureHandler(reject)
+                    [functionName](...args);
+            });
+        }
+
+        // Memuat SELURUH data transaksi (Produk, PO, Pembatalan PO, Biaya, Absen)
+        // langsung dari Google Sheets setiap kali login / refresh, supaya data
+        // yang tampil di web selalu sinkron dengan data yang sudah tersimpan di
+        // Spreadsheet (tidak lagi hanya mengandalkan memori sesi browser).
+        async function loadAllDataFromSheets() {
+            if (typeof google === 'undefined' || !google.script || !google.script.run) {
+                // Mode lokal/offline (tanpa Apps Script) - gunakan data yang sudah ada
+                renderAllTables();
+                return;
+            }
+
+            try {
+                const results = await Promise.allSettled([
+                    gsRun('getProducts'),
+                    gsRun('getPOOrders'),
+                    gsRun('getCancelledOrders'),
+                    gsRun('getBiayaLogs'),
+                    gsRun('getSalesLogs'),
+                    gsRun('getSuperadminLogs')
+                ]);
+
+                const [prodRes, poRes, batalRes, biayaRes, absenRes, superLogRes] = results;
+
+                if (prodRes.status === 'fulfilled' && Array.isArray(prodRes.value) && prodRes.value.length) {
+                    products = prodRes.value;
+                    saveProductsToLocalStorage();
+                }
+                if (poRes.status === 'fulfilled') poOrders = poRes.value || [];
+                if (batalRes.status === 'fulfilled') cancelledOrders = batalRes.value || [];
+                if (biayaRes.status === 'fulfilled') biayaLogs = biayaRes.value || [];
+                if (absenRes.status === 'fulfilled') salesLogs = absenRes.value || [];
+                if (superLogRes.status === 'fulfilled') superadminLogs = superLogRes.value || [];
+
+                const gagal = results.filter(r => r.status === 'rejected');
+                if (gagal.length > 0) {
+                    console.error('Sebagian data gagal dimuat dari Spreadsheet:', gagal.map(g => g.reason));
+                }
+            } catch (err) {
+                console.error('Gagal memuat data dari Spreadsheet:', err);
+                alert('Gagal memuat sebagian data dari Spreadsheet. Silakan cek koneksi lalu coba login ulang.');
+            }
+
+            renderAllTables();
+
+            // Selalu render grafik setelah data selesai dimuat, sehingga siap
+            // ditampilkan begitu user membuka tab Rekap Toko Deal.
+            renderSalesCharts();
+        }
+
+        // MEMUAT PENGUMUMAN TERAKHIR DARI SHEETS / LOCALSTORAGE
+        function loadAnnouncementData() {
+            if (typeof google !== 'undefined' && google.script && google.script.run
+                && typeof google.script.run.getAnnouncement === 'function') {
+                google.script.run
+                    .withSuccessHandler(data => {
+                        if (data && data.text) {
+                            announcement = data;
+                            updateAnnouncementDisplay();
+                        }
+                    })
+                    .withFailureHandler(err => console.error('Gagal memuat pengumuman:', err))
+                    .getAnnouncement();
+            } else {
+                const saved = localStorage.getItem('salespurp_announcement');
+                if (saved) {
+                    try {
+                        announcement = JSON.parse(saved);
+                    } catch (err) {}
+                }
+                updateAnnouncementDisplay();
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const user = users.find(u => u.email === email);
+
+            if (!user) { alert("Email tidak ditemukan!"); return; }
+            if (!user.active) { alert("Akun Anda non-aktif!"); return; }
+
+            currentUser = user;
+
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('navUserName').textContent = currentUser.nama;
+            document.getElementById('navUserBadge').textContent = currentUser.role;
+            document.getElementById('navUserBadge').className = `badge badge-${currentUser.role.toLowerCase()}`;
+
+            document.getElementById('profNama').value = currentUser.nama;
+            document.getElementById('profEmail').value = currentUser.email;
+            document.getElementById('absenNamaSales').value = currentUser.nama;
+            document.getElementById('ordNamaSales').value = currentUser.nama;
+
+            const superElements = document.querySelectorAll('.superadmin-only');
+            superElements.forEach(el => el.style.display = (currentUser.role === 'Superadmin') ? 'block' : 'none');
+
+            // FIX SINKRONISASI: sebelumnya hanya renderAllTables() dari array kosong
+            // di memori browser, sehingga data PO/Biaya/Absen yang sudah tersimpan
+            // di Spreadsheet tidak pernah dimuat ulang ke tampilan web.
+            switchTab('profileTab');
+            loadAllDataFromSheets();
+            loadAnnouncementData();
+            recordSuperadminLog(currentUser, 'Login Sistem', `Login berhasil sebagai ${currentUser.role}`);
+        });
+
+        // FIX: SETIAP ADMIN/SUPERADMIN YANG LOGIN OTOMATIS TERCATAT
+        // ------------------------------------------------------------------
+        // Sebelumnya sheet 'Superadmin_Logs' & tabel "Log Superadmin" di web
+        // tidak pernah terisi karena tidak ada fungsi yang menuliskannya.
+        // Fungsi ini mencatat setiap login (dan bisa dipanggil ulang untuk
+        // aksi penting lain) lalu langsung mengirim ke Spreadsheet supaya
+        // tampilan "Log Superadmin" selalu sinkron realtime.
+        function recordSuperadminLog(user, objek, detail) {
+            const now = new Date();
+            const tgl = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const jam = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+            const kirimLog = (gps) => {
+                const logData = {
+                    tgl: tgl,
+                    jam: jam,
+                    admin: user ? user.nama : '-',
+                    objek: objek,
+                    gps: gps || '-',
+                    detail: detail
+                };
+
+                // Tampilkan langsung di tabel (optimistic update) sambil menunggu
+                // konfirmasi tersimpan di Spreadsheet.
+                superadminLogs.unshift(logData);
+                renderSuperLogTable();
+
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    google.script.run
+                        .withSuccessHandler(() => {
+                            // Sinkronkan ulang dari Sheet supaya data 100% konsisten
+                            // (menangani kasus banyak admin login bersamaan).
+                            gsRun('getSuperadminLogs')
+                                .then(data => { superadminLogs = data || []; renderSuperLogTable(); })
+                                .catch(() => {});
+                        })
+                        .withFailureHandler(err => console.error('Gagal menyimpan log superadmin:', err))
+                        .saveSuperadminLogToSheet(logData);
+                }
+            };
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    pos => kirimLog(`${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`),
+                    () => kirimLog('-'),
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                );
+            } else {
+                kirimLog('-');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            renderLoginSelectOptions();
+            document.getElementById('loginOverlay').style.display = 'flex';
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            document.querySelectorAll('.sidebar-menu a').forEach(menu => menu.classList.remove('active'));
+
+            document.getElementById(tabId).style.display = 'block';
+            const activeMenu = document.getElementById(`menu-${tabId}`);
+            if (activeMenu) activeMenu.classList.add('active');
+
+            // Render ulang grafik setiap kali tab Rekap Toko Deal dibuka,
+            // agar ukuran canvas terhitung benar (canvas gagal render jika
+            // dihitung saat masih tersembunyi/display:none).
+            if (tabId === 'rekapDealTab') {
+                renderSalesCharts();
+            }
+        }
+
+        function updateAnnouncementDisplay() {
+            const banner = document.getElementById('announcementDisplay');
+            if (announcement.target === "Semua Team" || announcement.target === currentUser?.nama) {
+                banner.style.display = 'block';
+                document.getElementById('annTargetDisplay').textContent = announcement.target;
+                document.getElementById('annTextDisplay').textContent = announcement.text;
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        function updateMaxQtyLabel() {
+            const pId = parseInt(document.getElementById('ordNamaProduk').value);
+            const p = products.find(prod => prod.id === pId);
+            if (p) document.getElementById('qtyMaxLabel').textContent = `(Maks Stok: ${p.stok})`;
+        }
+
+        // FIX: FUNGSI GPS LOCATION (SEBELUMNYA TIDAK ADA / UNDEFINED)
+        function getGPSLocation() {
+            const gpsInput = document.getElementById('absenGps');
+            if (!gpsInput) return;
+
+            if (!navigator.geolocation) {
+                alert('Perangkat/browser Anda tidak mendukung fitur GPS.');
+                return;
+            }
+
+            gpsInput.value = 'Mencari lokasi...';
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+                    gpsInput.value = `${lat}, ${lng}`;
+                },
+                function(error) {
+                    gpsInput.value = '';
+                    let msg = 'Gagal mengambil lokasi GPS.';
+                    if (error.code === error.PERMISSION_DENIED) {
+                        msg = 'Izin lokasi ditolak. Aktifkan izin GPS di browser/HP Anda lalu coba lagi.';
+                    } else if (error.code === error.POSITION_UNAVAILABLE) {
+                        msg = 'Lokasi tidak tersedia saat ini. Pastikan GPS perangkat aktif.';
+                    } else if (error.code === error.TIMEOUT) {
+                        msg = 'Waktu pencarian lokasi habis, silakan coba lagi.';
+                    }
+                    alert(msg);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
+        // EVENT LISTENER: TAMBAH ADMIN / SALES BARU (MENCEGAH PAGE RELOAD / LOGOUT)
+        document.getElementById('newAdminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nama = document.getElementById('newAdminNama').value.trim();
+            const email = document.getElementById('newAdminEmail').value.trim();
+            const password = document.getElementById('newAdminPass').value;
+            const role = document.getElementById('newAdminRole').value;
+
+            // 1. Validasi Email Duplikat
+            const duplicate = users.some(u => u.email.toLowerCase() === email.toLowerCase());
+            if (duplicate) {
+                alert('Email sudah digunakan oleh akun lain!');
+                return;
+            }
+
+            // 2. Buat Objek User Baru
+            const newUser = {
+                id: Date.now(),
+                nama: nama,
+                email: email,
+                password: password,
+                role: role,
+                active: true
+            };
+
+            // 3. Masukkan ke array lokal
+            users.push(newUser);
+
+            // 4. Simpan ke Google Sheets
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.withFailureHandler(function(err) {
+                    console.error("Gagal menyimpan ke Sheet:", err);
+                    alert("Gagal sinkronisasi akun baru ke Google Sheets.");
+                }).saveUserToSheet(newUser);
+            } else {
+                localStorage.setItem('salespurp_users', JSON.stringify(users));
+            }
+
+            // 5. Perbarui Tabel UI & Options Login
+            renderUserManagement();
+            renderLoginSelectOptions();
+
+            // 6. Reset Form
+            this.reset();
+            alert(`Berhasil membuat akun ${role} baru untuk ${nama}!`);
+        });
+
+        // EVENT LISTENER: PUBLIKASIKAN ANNOUNCEMENT / PENGUMUMAN (SUPERADMIN)
+        // FIX: sebelumnya form ini TIDAK punya listener, sehingga submit form
+        // memicu reload halaman bawaan browser (native submit) dan membuat
+        // aplikasi terlihat "keluar sendiri" / kembali ke layar login.
+        document.getElementById('announceForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // WAJIB: mencegah reload halaman
+
+            const target = document.getElementById('annTarget').value;
+            const text = document.getElementById('annText').value.trim();
+
+            if (!text) {
+                alert('Pesan pengumuman tidak boleh kosong!');
+                return;
+            }
+
+            announcement = { target: target, text: text };
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                if (typeof google.script.run.saveAnnouncementToSheet === 'function') {
+                    google.script.run
+                        .withFailureHandler(function(err) {
+                            console.error('Gagal menyimpan pengumuman ke Sheet:', err);
+                            alert('Pengumuman tampil di layar, tetapi gagal disimpan ke Spreadsheet.');
+                        })
+                        .saveAnnouncementToSheet(announcement);
+                }
+            } else {
+                localStorage.setItem('salespurp_announcement', JSON.stringify(announcement));
+            }
+
+            updateAnnouncementDisplay();
+            this.reset();
+            document.getElementById('annTarget').value = 'Semua Team';
+            alert('Pengumuman berhasil dipublikasikan!');
+        });
+
+        // EVENT LISTENER: KIRIM ABSEN KUNJUNGAN TOKO
+        // FIX: sebelumnya form ini TIDAK punya listener, sehingga submit form
+        // memicu reload halaman bawaan browser (native submit) dan membuat
+        // aplikasi terlihat "keluar sendiri" / kembali ke layar login.
+        document.getElementById('absenForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // WAJIB: mencegah reload halaman
+
+            const kategori = document.getElementById('absenKategori').value;
+            const namaToko = document.getElementById('absenNamaToko').value.trim();
+            const planning = document.getElementById('absenPlaning').value.trim();
+            const gps = document.getElementById('absenGps').value.trim();
+            const attachmentInput = document.getElementById('absenAttachment');
+            const livePhotoInput = document.getElementById('absenLivePhoto');
+
+            if (!gps || gps === 'Mencari lokasi...') {
+                alert('Mohon ambil koordinat GPS terlebih dahulu (klik tombol "Get GPS") sebelum mengirim absen!');
+                return;
+            }
+            if (!livePhotoInput.files || !livePhotoInput.files[0]) {
+                alert('Live Photo (Foto Kunjungan) wajib diunggah!');
+                return;
+            }
+
+            const now = new Date();
+            const tgl = now.toISOString().split('T')[0];
+            const jam = now.toTimeString().split(' ')[0];
+
+            let fotoUrl = "";
+            if (livePhotoInput.files && livePhotoInput.files[0]) {
+                fotoUrl = URL.createObjectURL(livePhotoInput.files[0]);
+            }
+
+            let attachmentUrl = "";
+            if (attachmentInput.files && attachmentInput.files[0]) {
+                attachmentUrl = URL.createObjectURL(attachmentInput.files[0]);
+            }
+
+            const newLog = {
+                id: Date.now(),
+                tgl: tgl,
+                jam: jam,
+                sales: currentUser.nama,
+                kategori: kategori,
+                toko: namaToko,
+                planning: planning,
+                gps: gps,
+                foto: fotoUrl,
+                attachment: attachmentUrl
+            };
+
+            salesLogs.unshift(newLog);
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                if (typeof google.script.run.saveAbsenToSheet === 'function') {
+                    google.script.run
+                        .withFailureHandler(function(err) {
+                            console.error('Gagal menyimpan absen ke Sheet:', err);
+                            alert('Absen tampil di layar, tetapi gagal disimpan ke Spreadsheet.');
+                        })
+                        .saveAbsenToSheet(newLog);
+                }
+            }
+
+            renderSalesLogTable();
+            this.reset();
+            document.getElementById('absenNamaSales').value = currentUser.nama;
+            document.getElementById('absenGps').value = '';
+            alert('Absen kunjungan berhasil dikirim!');
+        });
+
+        // SUBMIT PO BARU
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pId = parseInt(document.getElementById('ordNamaProduk').value);
+            const prod = products.find(p => p.id === pId);
+            const qty = parseInt(document.getElementById('ordJumlah').value);
+            const toko = document.getElementById('ordNamaToko').value;
+            const alamat = document.getElementById('ordAlamatToko').value;
+            const tgl = document.getElementById('ordTgl').value;
+            const fileInput = document.getElementById('ordFotoProduk');
+
+            if (qty > prod.stok) {
+                alert(`Stok tidak mencukupi! Tersisa ${prod.stok}`);
+                return;
+            }
+
+            prod.stok -= qty;
+
+            let fotoUrl = "https://via.placeholder.com/45?text=PO";
+            if (fileInput.files && fileInput.files[0]) {
+                fotoUrl = URL.createObjectURL(fileInput.files[0]);
+            }
+
+            const totalRupiah = qty * prod.harga;
+
+            const newPO = {
+                id: Date.now(),
+                toko: toko,
+                alamat: alamat,
+                produkId: prod.id,
+                produkNama: prod.nama,
+                jumlah: qty,
+                totalRupiah: totalRupiah,
+                tgl: tgl,
+                sales: currentUser.nama,
+                foto: fotoUrl
+            };
+
+            poOrders.unshift(newPO);
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.savePOToSheet(newPO);
+            }
+
+            renderPOTable();
+            renderProductTables();
+            renderRekapDealTable();
+            this.reset();
+            document.getElementById('ordNamaSales').value = currentUser.nama;
+            alert('PO Masuk Berhasil Ditambahkan & Disimpan ke Spreadsheet!');
+        });
+
+        // BATALKAN PO
+        function batalkanPO(poId) {
+            const index = poOrders.findIndex(p => p.id === poId);
+            if (index !== -1) {
+                const po = poOrders[index];
+                const alasan = prompt(`Masukkan alasan pembatalan PO untuk toko ${po.toko}:`, "Stok toko masih cukup / Pembatalan Client");
+                
+                if (alasan === null) return;
+
+                const prod = products.find(p => p.id === po.produkId);
+                if (prod) prod.stok += po.jumlah;
+
+                const cancelledItem = { ...po, tglBatal: new Date().toISOString().split('T')[0], alasan: alasan };
+                cancelledOrders.unshift(cancelledItem);
+
+                poOrders.splice(index, 1);
+
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    google.script.run.cancelPOSheet(cancelledItem);
+                }
+
+                renderPOTable();
+                renderCancelledTable();
+                renderProductTables();
+                renderRekapDealTable();
+            }
+        }
+
+        function editAlasanBatal(poId) {
+            const item = cancelledOrders.find(c => c.id === poId);
+            if (item) {
+                const newAlasan = prompt("Ubah keterangan / alasan pembatalan:", item.alasan);
+                if (newAlasan !== null && newAlasan.trim() !== "") {
+                    item.alasan = newAlasan;
+                    renderCancelledTable();
+                    alert("Alasan pembatalan berhasil diperbarui!");
+                }
+            }
+        }
+
+        function restorePO(poId) {
+            const index = cancelledOrders.findIndex(c => c.id === poId);
+            if (index !== -1) {
+                const item = cancelledOrders[index];
+
+                const prod = products.find(p => p.id === item.produkId);
+                if (prod) {
+                    if (prod.stok < item.jumlah) {
+                        alert(`Gagal mengembalikan PO! Stok produk ${prod.nama} saat ini (${prod.stok}) kurang dari jumlah order (${item.jumlah}).`);
+                        return;
+                    }
+                    prod.stok -= item.jumlah;
+                }
+
+                delete item.tglBatal;
+                delete item.alasan;
+
+                poOrders.unshift(item);
+                cancelledOrders.splice(index, 1);
+
+                renderPOTable();
+                renderCancelledTable();
+                renderProductTables();
+                renderRekapDealTable();
+                alert("PO Berhasil Dikembalikan ke Daftar PO Active!");
+            }
+        }
+
+        // INPUT BIAYA LAIN-LAIN
+        document.getElementById('biayaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const kategori = document.getElementById('biayaKategori').value;
+            const tgl = document.getElementById('biayaTgl').value;
+            const nominal = parseInt(document.getElementById('biayaNominal').value);
+            const ket = document.getElementById('biayaKet').value;
+            const fileInput = document.getElementById('biayaBukti');
+
+            let buktiUrl = "https://via.placeholder.com/45?text=Nota";
+            if (fileInput.files && fileInput.files[0]) {
+                buktiUrl = URL.createObjectURL(fileInput.files[0]);
+            }
+
+            const newBiaya = {
+                id: Date.now(),
+                kategori, tgl, nominal, ket, sales: currentUser.nama, bukti: buktiUrl
+            };
+
+            biayaLogs.unshift(newBiaya);
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.saveBiayaToSheet(newBiaya);
+            }
+
+            renderBiayaTable();
+            this.reset();
+            alert("Transaksi Biaya Berhasil Disimpan!");
+        });
+
+        // EDIT BIAYA LAIN-LAIN
+        function editBiaya(id) {
+            const item = biayaLogs.find(b => b.id === id);
+            if (!item) return;
+
+            const kategori = prompt("Ubah kategori biaya:", item.kategori);
+            if (kategori === null) return;
+            const tgl = prompt("Ubah tanggal transaksi (YYYY-MM-DD):", item.tgl);
+            if (tgl === null) return;
+            const nominalInput = prompt("Ubah nominal biaya (Rp):", item.nominal);
+            if (nominalInput === null) return;
+            const nominal = parseInt(nominalInput.replace(/[^0-9]/g, ''), 10);
+            if (isNaN(nominal) || nominal < 0) {
+                alert("Nominal biaya tidak valid!");
+                return;
+            }
+            const ket = prompt("Ubah keterangan:", item.ket || "");
+            if (ket === null) return;
+
+            item.kategori = kategori.trim() || item.kategori;
+            item.tgl = tgl.trim() || item.tgl;
+            item.nominal = nominal;
+            item.ket = ket.trim();
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                try { google.script.run.updateBiayaToSheet(item); } catch (err) {}
+            }
+
+            renderBiayaTable();
+            alert("Data biaya berhasil diperbarui!");
+        }
+
+        // PASSWORD: TAMPILKAN / SEMBUNYIKAN
+        function togglePasswordVisibility(id) {
+            const input = document.getElementById(`passwordView-${id}`);
+            const icon = document.getElementById(`passwordIcon-${id}`);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                if (icon) icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        // EDIT AKUN PENGGUNA
+        function openEditModal(id) {
+            const user = users.find(u => u.id == id);
+            if (!user) return;
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editUserNama').value = user.nama || '';
+            document.getElementById('editUserEmail').value = user.email || '';
+            document.getElementById('editUserPass').value = '';
+            document.getElementById('editUserRole').value = user.role || 'Admin';
+            document.getElementById('editUserModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editUserModal').style.display = 'none';
+            document.getElementById('editUserForm').reset();
+        }
+
+        document.getElementById('editUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editUserId').value, 10);
+            const user = users.find(u => u.id == id);
+            if (!user) return;
+
+            const oldEmail = user.email;
+            user.nama = document.getElementById('editUserNama').value.trim();
+            user.email = document.getElementById('editUserEmail').value.trim();
+            user.role = document.getElementById('editUserRole').value;
+            const newPassword = document.getElementById('editUserPass').value;
+            if (newPassword.trim() !== '') user.password = newPassword;
+
+            const duplicate = users.some(u => u.id !== user.id && u.email.toLowerCase() === user.email.toLowerCase());
+            if (duplicate) {
+                alert('Email sudah digunakan oleh akun lain!');
+                user.email = oldEmail;
+                return;
+            }
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                try { google.script.run.updateUser(user); } catch (err) {}
+            } else {
+                localStorage.setItem('salespurp_users', JSON.stringify(users));
+            }
+
+            renderUserManagement();
+            renderLoginSelectOptions();
+            closeEditModal();
+            alert('Akun pengguna berhasil diperbarui!');
+        });
+
+        // DELETE AKUN PENGGUNA
+        function deleteUser(id) {
+            const user = users.find(u => u.id == id);
+            if (!user) return;
+
+            if (currentUser && currentUser.id == id) {
+                alert('Akun yang sedang digunakan tidak dapat dihapus!');
+                return;
+            }
+
+            if (users.filter(u => u.role === 'Superadmin' && u.active).length <= 1 && user.role === 'Superadmin') {
+                alert('Minimal harus ada satu Superadmin aktif. Akun ini tidak dapat dihapus!');
+                return;
+            }
+
+            if (!confirm(`Hapus akun ${user.nama} (${user.email})?\nTindakan ini tidak dapat dibatalkan.`)) return;
+
+            users = users.filter(u => u.id != id);
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                try { google.script.run.deleteUser(id); } catch (err) {}
+            } else {
+                localStorage.setItem('salespurp_users', JSON.stringify(users));
+            }
+
+            renderUserManagement();
+            renderLoginSelectOptions();
+            alert('Akun pengguna berhasil dihapus!');
+        }
+
+        function renderBiayaTable() {
+            const tbody = document.getElementById('biayaTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!biayaLogs || biayaLogs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align:center;color:var(--text-muted);padding:1.5rem;">
+                            Belum ada transaksi biaya.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            biayaLogs.forEach(b => {
+                const safeId = Number(b.id);
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${b.tgl || '-'}</td>
+                        <td><span class="badge badge-admin">${b.kategori || '-'}</span></td>
+                        <td><strong>Rp ${Number(b.nominal || 0).toLocaleString('id-ID')}</strong></td>
+                        <td>${b.ket || '-'}</td>
+                        <td>
+                            ${b.bukti
+                                ? `<img src="${b.bukti}" width="40" height="40"
+                                    style="object-fit:cover;border-radius:4px;cursor:pointer;"
+                                    onclick="window.open('${b.bukti}','_blank')"
+                                    title="Lihat bukti">`
+                                : '-'}
+                        </td>
+                        <td>${b.sales || '-'}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary"
+                                style="padding:3px 8px;font-size:0.75rem;"
+                                onclick="openEditBiayaModal(${safeId})">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openEditBiayaModal(id) {
+            const item = biayaLogs.find(b => Number(b.id) === Number(id));
+
+            if (!item) {
+                alert("Data biaya tidak ditemukan.");
+                return;
+            }
+
+            document.getElementById('editBiayaId').value = item.id;
+            document.getElementById('editBiayaKategori').value = item.kategori || 'Lain-lain';
+            document.getElementById('editBiayaTgl').value = item.tgl || '';
+            document.getElementById('editBiayaNominal').value = item.nominal || 0;
+            document.getElementById('editBiayaKet').value = item.ket || '';
+            document.getElementById('editBiayaBukti').value = '';
+
+            document.getElementById('editBiayaPreview').innerHTML = item.bukti
+                ? `<div style="font-size:.8rem;color:var(--text-muted);">
+                       Bukti saat ini:
+                       <img src="${item.bukti}" width="70" height="70"
+                            style="display:block;margin-top:6px;object-fit:cover;border-radius:6px;">
+                   </div>`
+                : '<span style="font-size:.8rem;color:var(--text-muted);">Belum ada bukti.</span>';
+
+            document.getElementById('editBiayaModal').style.display = 'flex';
+        }
+
+        function closeEditBiayaModal() {
+            document.getElementById('editBiayaModal').style.display = 'none';
+            document.getElementById('editBiayaForm').reset();
+            document.getElementById('editBiayaId').value = '';
+            document.getElementById('editBiayaPreview').innerHTML = '';
+        }
+
+        document.getElementById('editBiayaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const id = Number(document.getElementById('editBiayaId').value);
+            const item = biayaLogs.find(b => Number(b.id) === id);
+
+            if (!item) {
+                alert("Data biaya tidak ditemukan.");
+                return;
+            }
+
+            const kategori = document.getElementById('editBiayaKategori').value;
+            const tgl = document.getElementById('editBiayaTgl').value;
+            const nominal = Number(document.getElementById('editBiayaNominal').value);
+            const ket = document.getElementById('editBiayaKet').value.trim();
+            const fileInput = document.getElementById('editBiayaBukti');
+
+            if (!tgl || !kategori || !Number.isFinite(nominal) || nominal < 0) {
+                alert("Mohon lengkapi data biaya dengan benar.");
+                return;
+            }
+
+            const saveUpdatedBiaya = (buktiUrl) => {
+                item.kategori = kategori;
+                item.tgl = tgl;
+                item.nominal = nominal;
+                item.ket = ket;
+                if (buktiUrl) item.bukti = buktiUrl;
+
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    if (typeof google.script.run.updateBiayaToSheet === 'function') {
+                        google.script.run
+                            .withFailureHandler(err => {
+                                console.error(err);
+                                alert("Data di tampilan sudah diperbarui, tetapi gagal memperbarui Spreadsheet.");
+                            })
+                            .updateBiayaToSheet(item);
+                    }
+                }
+
+                renderBiayaTable();
+                closeEditBiayaModal();
+                alert("Data Biaya Lain-lain berhasil diperbarui!");
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    saveUpdatedBiaya(event.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                saveUpdatedBiaya(item.bukti);
+            }
+        });
+
+        function renderPOTable() {
+            const tbody = document.getElementById('poTableBody');
+            tbody.innerHTML = '';
+            poOrders.forEach(po => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${po.foto}" width="40" height="40" style="object-fit:cover; border-radius:4px;"></td>
+                        <td><strong>${po.toko}</strong></td>
+                        <td>${po.alamat}</td>
+                        <td>${po.produkNama}</td>
+                        <td>${po.jumlah} Pcs</td>
+                        <td>Rp ${po.totalRupiah.toLocaleString()}</td>
+                        <td>${po.tgl}</td>
+                        <td>${po.sales}</td>
+                        <td><button class="btn btn-danger" style="padding:3px 8px; font-size:0.75rem;" onclick="batalkanPO(${po.id})"><i class="fa-solid fa-ban"></i> Batal</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderCancelledTable() {
+            const tbody = document.getElementById('batalTableBody');
+            tbody.innerHTML = '';
+            cancelledOrders.forEach(c => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${c.toko}</strong></td>
+                        <td>${c.alamat}</td>
+                        <td>${c.produkNama}</td>
+                        <td>${c.jumlah} Pcs</td>
+                        <td>${c.tglBatal}</td>
+                        <td>${c.sales}</td>
+                        <td><span style="color:var(--danger);">${c.alasan}</span></td>
+                        <td>
+                            <button class="btn btn-primary" style="padding:3px 8px; font-size:0.75rem;" onclick="editAlasanBatal(${c.id})"><i class="fa-solid fa-pen"></i> Edit Alasan</button>
+                            <button class="btn btn-success" style="padding:3px 8px; font-size:0.75rem;" onclick="restorePO(${c.id})"><i class="fa-solid fa-rotate-left"></i> Kembalikan</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderRekapDealTable() {
+            const tbody = document.getElementById('rekapDealBody');
+            tbody.innerHTML = '';
+
+            let rekapMap = {};
+            let globalRupiah = 0;
+
+            poOrders.forEach(po => {
+                globalRupiah += po.totalRupiah;
+                if (!rekapMap[po.toko]) {
+                    rekapMap[po.toko] = {
+                        alamat: po.alamat,
+                        totalRupiah: 0,
+                        totalBarang: 0,
+                        sales: po.sales,
+                        lastUpdate: po.tgl
+                    };
+                }
+                rekapMap[po.toko].totalRupiah += po.totalRupiah;
+                rekapMap[po.toko].totalBarang += po.jumlah;
+                rekapMap[po.toko].lastUpdate = po.tgl;
+            });
+
+            const tokoKeys = Object.keys(rekapMap);
+            document.getElementById('rekapTotalRupiah').textContent = `Rp ${globalRupiah.toLocaleString()}`;
+            document.getElementById('rekapTotalToko').textContent = `${tokoKeys.length} Toko`;
+
+            tokoKeys.forEach(tokoName => {
+                const data = rekapMap[tokoName];
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${tokoName}</strong></td>
+                        <td>${data.alamat}</td>
+                        <td><strong style="color:var(--success);">Rp ${data.totalRupiah.toLocaleString()}</strong></td>
+                        <td>${data.totalBarang} Pcs</td>
+                        <td>${data.sales}</td>
+                        <td>${data.lastUpdate}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // ==========================================
+        // GRAFIK PENJUALAN (KESELURUHAN & PER ADMIN/SALES)
+        // ==========================================
+        // CATATAN: Grafik dibuat native memakai SVG (tanpa library eksternal
+        // seperti Chart.js), karena web app Google Apps Script sering memblokir
+        // eksekusi <script src="..."> dari CDN akibat kebijakan keamanan (CSP)
+        // bawaan, sehingga grafik gagal tampil walau data sudah benar.
+        // Pendekatan SVG ini dijamin selalu berjalan karena tidak bergantung
+        // pada resource/script eksternal apa pun.
+
+        function renderSalesCharts() {
+            renderChartPenjualanKeseluruhan();
+            renderChartPenjualanPerSales();
+        }
+
+        // Format angka besar menjadi singkatan (Rb/Jt/M) agar label sumbu Y ringkas
+        function formatRupiahSingkat(val) {
+            val = Number(val) || 0;
+            if (val >= 1000000000) return (val / 1000000000).toFixed(1).replace(/\.0$/, '') + ' M';
+            if (val >= 1000000) return (val / 1000000).toFixed(1).replace(/\.0$/, '') + ' Jt';
+            if (val >= 1000) return (val / 1000).toFixed(0) + ' Rb';
+            return String(val);
+        }
+
+        function renderChartEmptyState(container) {
+            container.innerHTML = `
+                <div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted); font-size:0.85rem; text-align:center; padding: 0 1rem;">
+                    <i class="fa-solid fa-chart-simple" style="margin-right:8px;"></i> Belum ada data penjualan
+                </div>
+            `;
+        }
+
+        // Render ulang grafik saat ukuran layar berubah (resize/rotasi), hanya jika
+        // tab Rekap Toko Deal sedang aktif, supaya lebar SVG tetap pas.
+        let chartResizeTimeout = null;
+        window.addEventListener('resize', function() {
+            clearTimeout(chartResizeTimeout);
+            chartResizeTimeout = setTimeout(function() {
+                const rekapTab = document.getElementById('rekapDealTab');
+                if (rekapTab && rekapTab.style.display !== 'none') {
+                    renderSalesCharts();
+                }
+            }, 250);
+        });
+
+        // Grafik Garis: Total Penjualan per Tanggal (akumulasi seluruh transaksi PO aktif)
+        function renderChartPenjualanKeseluruhan() {
+            const container = document.getElementById('chartPenjualanKeseluruhan');
+            if (!container) return;
+
+            const dailyMap = {};
+            poOrders.forEach(po => {
+                if (!po.tgl) return;
+                dailyMap[po.tgl] = (dailyMap[po.tgl] || 0) + Number(po.totalRupiah || 0);
+            });
+
+            const sortedDates = Object.keys(dailyMap).sort();
+            if (sortedDates.length === 0) {
+                renderChartEmptyState(container);
+                return;
+            }
+
+            const values = sortedDates.map(d => dailyMap[d]);
+            const maxVal = Math.max(...values, 1);
+
+            const width = Math.max(container.clientWidth || 500, 280);
+            const height = 280;
+            const padL = 68, padR = 20, padT = 20, padB = 46;
+            const chartW = width - padL - padR;
+            const chartH = height - padT - padB;
+
+            const stepX = sortedDates.length > 1 ? chartW / (sortedDates.length - 1) : 0;
+            const points = values.map((v, i) => ({
+                x: padL + (sortedDates.length > 1 ? i * stepX : chartW / 2),
+                y: padT + chartH - (v / maxVal) * chartH,
+                v: v,
+                tgl: sortedDates[i]
+            }));
+
+            const gridCount = 4;
+            let gridLines = '', yLabels = '';
+            for (let i = 0; i <= gridCount; i++) {
+                const y = padT + chartH - (i / gridCount) * chartH;
+                const val = Math.round((maxVal / gridCount) * i);
+                gridLines += `<line x1="${padL}" y1="${y}" x2="${padL + chartW}" y2="${y}" stroke="#eef0f6" stroke-width="1"/>`;
+                yLabels += `<text x="${padL - 10}" y="${y + 4}" font-size="10" fill="#6c6c80" text-anchor="end">Rp ${formatRupiahSingkat(val)}</text>`;
+            }
+
+            const polylinePoints = points.map(p => `${p.x},${p.y}`).join(' ');
+            const areaPoints = `${padL},${padT + chartH} ${polylinePoints} ${padL + chartW},${padT + chartH}`;
+
+            let dots = '', xLabels = '';
+            const labelEvery = Math.max(1, Math.ceil(points.length / 8));
+            points.forEach((p, i) => {
+                dots += `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#8a2be2" stroke="#fff" stroke-width="1.5"><title>${p.tgl}: Rp ${p.v.toLocaleString('id-ID')}</title></circle>`;
+                if (i % labelEvery === 0 || i === points.length - 1) {
+                    const shortDate = p.tgl.length >= 5 ? p.tgl.slice(5) : p.tgl;
+                    xLabels += `<text x="${p.x}" y="${height - 15}" font-size="10" fill="#6c6c80" text-anchor="middle">${shortDate}</text>`;
+                }
+            });
+
+            container.innerHTML = `
+                <svg viewBox="0 0 ${width} ${height}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+                    ${gridLines}
+                    ${yLabels}
+                    <polygon points="${areaPoints}" fill="rgba(138,43,226,0.12)"></polygon>
+                    <polyline points="${polylinePoints}" fill="none" stroke="#8a2be2" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                    ${dots}
+                    ${xLabels}
+                </svg>
+            `;
+        }
+
+        // Grafik Batang: Total Penjualan per Admin / Sales (termasuk Superadmin)
+        // Warna kuning untuk Superadmin, ungu untuk Admin/Sales biasa.
+        function renderChartPenjualanPerSales() {
+            const container = document.getElementById('chartPenjualanPerSales');
+            if (!container) return;
+
+            const salesMap = {};
+            // Pastikan semua akun aktif (Admin & Superadmin) tetap muncul walau belum ada transaksi
+            users.forEach(u => {
+                if (u.active) salesMap[u.nama] = 0;
+            });
+            poOrders.forEach(po => {
+                if (!po.sales) return;
+                salesMap[po.sales] = (salesMap[po.sales] || 0) + Number(po.totalRupiah || 0);
+            });
+
+            const labels = Object.keys(salesMap);
+            if (labels.length === 0) {
+                renderChartEmptyState(container);
+                return;
+            }
+
+            const values = labels.map(l => salesMap[l]);
+            const maxVal = Math.max(...values, 1);
+
+            const width = Math.max(container.clientWidth || 500, 280);
+            const height = 280;
+            const padL = 68, padR = 20, padT = 30, padB = 46;
+            const chartW = width - padL - padR;
+            const chartH = height - padT - padB;
+
+            const barGap = 20;
+            const barWidth = Math.max(24, Math.min(60, (chartW - barGap * (labels.length - 1)) / labels.length));
+            const totalBarsWidth = barWidth * labels.length + barGap * (labels.length - 1);
+            const startX = padL + Math.max(0, (chartW - totalBarsWidth) / 2);
+
+            const gridCount = 4;
+            let gridLines = '', yLabels = '';
+            for (let i = 0; i <= gridCount; i++) {
+                const y = padT + chartH - (i / gridCount) * chartH;
+                const val = Math.round((maxVal / gridCount) * i);
+                gridLines += `<line x1="${padL}" y1="${y}" x2="${padL + chartW}" y2="${y}" stroke="#eef0f6" stroke-width="1"/>`;
+                yLabels += `<text x="${padL - 10}" y="${y + 4}" font-size="10" fill="#6c6c80" text-anchor="end">Rp ${formatRupiahSingkat(val)}</text>`;
+            }
+
+            let bars = '', xLabels = '';
+            labels.forEach((nama, i) => {
+                const val = values[i];
+                const u = users.find(usr => usr.nama === nama);
+                const color = (u && u.role === 'Superadmin') ? '#ffd700' : '#9370db';
+                const barH = (val / maxVal) * chartH;
+                const x = startX + i * (barWidth + barGap);
+                const y = padT + chartH - barH;
+
+                bars += `<rect x="${x}" y="${y}" width="${barWidth}" height="${Math.max(barH, 0)}" rx="6" fill="${color}"><title>${nama}: Rp ${val.toLocaleString('id-ID')}</title></rect>`;
+                if (val > 0) {
+                    bars += `<text x="${x + barWidth / 2}" y="${y - 6}" font-size="9" fill="#5c068c" text-anchor="middle" font-weight="600">${formatRupiahSingkat(val)}</text>`;
+                }
+                const namaLabel = nama.length > 10 ? nama.slice(0, 9) + '…' : nama;
+                xLabels += `<text x="${x + barWidth / 2}" y="${height - 15}" font-size="10" fill="#6c6c80" text-anchor="middle">${namaLabel}</text>`;
+            });
+
+            container.innerHTML = `
+                <svg viewBox="0 0 ${width} ${height}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+                    ${gridLines}
+                    ${yLabels}
+                    ${bars}
+                    ${xLabels}
+                </svg>
+            `;
+        }
+
+        function renderProductTables() {
+            const optSelect = document.getElementById('ordNamaProduk');
+            const catalogBody = document.getElementById('produkCatalogBody');
+            const settingBody = document.getElementById('settingProductBody');
+            if (!optSelect || !catalogBody || !settingBody) return;
+
+            optSelect.innerHTML = '';
+            catalogBody.innerHTML = '';
+            settingBody.innerHTML = '';
+
+            products.forEach(p => {
+                optSelect.innerHTML += `<option value="${p.id}">${p.nama} (Stok: ${p.stok})</option>`;
+                catalogBody.innerHTML += `<tr><td><strong>${p.nama}</strong></td><td>${Number(p.stok).toLocaleString('id-ID')} Unit</td><td>Rp ${Number(p.harga).toLocaleString('id-ID')}</td></tr>`;
+                settingBody.innerHTML += `
+                    <tr>
+                        <td><strong>${p.nama}</strong></td>
+                        <td>${Number(p.stok).toLocaleString('id-ID')} Unit</td>
+                        <td>Rp ${Number(p.harga).toLocaleString('id-ID')}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" style="padding:3px 8px;font-size:0.75rem;" onclick="editProduct(${p.id})">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            <button type="button" class="btn btn-danger" style="padding:3px 8px;font-size:0.75rem;" onclick="deleteProduct(${p.id})">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+
+            updateMaxQtyLabel();
+        }
+
+        // TAMBAH / UPDATE PRODUK & STOK
+        document.getElementById('addProductForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const editId = document.getElementById('editProductId').value;
+            const nama = document.getElementById('pNama').value.trim();
+            const stok = Number(document.getElementById('pStok').value);
+            const harga = Number(document.getElementById('pHarga').value);
+
+            if (!nama) {
+                alert('Nama produk wajib diisi.');
+                return;
+            }
+            if (!Number.isFinite(stok) || stok < 0 || !Number.isInteger(stok)) {
+                alert('Jumlah stok harus berupa angka bulat 0 atau lebih.');
+                return;
+            }
+            if (!Number.isFinite(harga) || harga < 0) {
+                alert('Harga produk tidak valid.');
+                return;
+            }
+
+            const duplicate = products.find(p =>
+                p.id != editId && p.nama.trim().toLowerCase() === nama.toLowerCase()
+            );
+            if (duplicate) {
+                alert('Nama produk sudah ada. Gunakan nama produk yang berbeda.');
+                return;
+            }
+
+            if (editId) {
+                const product = products.find(p => Number(p.id) === Number(editId));
+                if (!product) {
+                    alert('Produk yang akan diperbarui tidak ditemukan.');
+                    return;
+                }
+
+                product.nama = nama;
+                product.stok = stok;
+                product.harga = harga;
+                saveProductsData(product, 'update');
+            } else {
+                const newProduct = {
+                    id: Date.now(),
+                    nama,
+                    stok,
+                    harga
+                };
+                products.push(newProduct);
+                saveProductsData(newProduct, 'create');
+            }
+
+            renderProductTables();
+            this.reset();
+            document.getElementById('editProductId').value = '';
+            setProductEditMode(false);
+            alert(editId ? 'Produk dan stok berhasil diperbarui!' : 'Produk berhasil ditambahkan!');
+        });
+
+        function editProduct(id) {
+            const product = products.find(p => Number(p.id) === Number(id));
+            if (!product) {
+                alert('Produk tidak ditemukan.');
+                return;
+            }
+
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('pNama').value = product.nama || '';
+            document.getElementById('pStok').value = Number(product.stok) || 0;
+            document.getElementById('pHarga').value = Number(product.harga) || 0;
+            setProductEditMode(true);
+            document.getElementById('pNama').focus();
+        }
+
+        function setProductEditMode(editing) {
+            const btn = document.getElementById('productSubmitBtn');
+            const cancel = document.getElementById('productCancelEditBtn');
+            if (!btn || !cancel) return;
+
+            btn.innerHTML = editing
+                ? '<i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan'
+                : '<i class="fa-solid fa-plus"></i> Tambah Produk';
+            cancel.style.display = editing ? 'inline-block' : 'none';
+        }
+
+        function cancelProductEdit() {
+            document.getElementById('addProductForm').reset();
+            document.getElementById('editProductId').value = '';
+            setProductEditMode(false);
+        }
+
+        function saveProductsToLocalStorage() {
+            localStorage.setItem('salespurp_products', JSON.stringify(products));
+        }
+
+        function loadProductsFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('salespurp_products');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) products = parsed;
+                }
+            } catch (err) {
+                console.warn('Data produk lokal tidak dapat dibaca:', err);
+            }
+        }
+
+        function saveProductsData(product, action) {
+            saveProductsToLocalStorage();
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                try {
+                    if (action === 'update' && typeof google.script.run.updateProductToSheet === 'function') {
+                        google.script.run.updateProductToSheet(product);
+                    } else if (action === 'create' && typeof google.script.run.saveProductToSheet === 'function') {
+                        google.script.run.saveProductToSheet(product);
+                    }
+                } catch (err) {
+                    console.warn('Sinkronisasi produk ke Spreadsheet gagal:', err);
+                }
+            }
+        }
+
+        function deleteProduct(id) {
+            const product = products.find(p => Number(p.id) === Number(id));
+            if (!product) return;
+
+            if (!confirm(`Hapus produk "${product.nama}"?`)) return;
+
+            products = products.filter(p => Number(p.id) !== Number(id));
+            saveProductsToLocalStorage();
+            renderProductTables();
+
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                try {
+                    if (typeof google.script.run.deleteProductFromSheet === 'function') {
+                        google.script.run.deleteProductFromSheet(id);
+                    }
+                } catch (err) {
+                    console.warn('Penghapusan produk di Spreadsheet gagal:', err);
+                }
+            }
+
+            alert('Produk berhasil dihapus.');
+        }
+
+        function renderUserManagement() {
+            const tbody = document.getElementById('userManagementBody');
+            tbody.innerHTML = '';
+            users.forEach(u => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${u.nama}</strong></td>
+                        <td>${u.email}</td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:6px;min-width:150px;">
+                                <input type="password" id="passwordView-${u.id}" value="${u.password || ''}" readonly class="form-control" style="padding:5px 7px;font-size:0.78rem;background:#fff;min-width:115px;">
+                                <button type="button" class="btn btn-secondary" title="Tampilkan/Sembunyikan Password" style="padding:5px 8px;" onclick="togglePasswordVisibility(${u.id})">
+                                    <i class="fa-solid fa-eye" id="passwordIcon-${u.id}"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-${u.role.toLowerCase()}">${u.role}</span></td>
+                        <td><span class="badge badge-${u.active ? 'active' : 'inactive'}">${u.active ? 'Aktif' : 'Non-Aktif'}</span></td>
+                        <td>
+                            <button class="btn btn-primary" style="padding:3px 8px; font-size:0.75rem;" onclick="openEditModal(${u.id})"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn btn-danger" style="padding:3px 8px; font-size:0.75rem;" onclick="deleteUser(${u.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderSalesLogTable() {
+            const tbody = document.getElementById('salesLogTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!salesLogs || salesLogs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align:center;color:var(--text-muted);padding:1.5rem;">
+                            Belum ada log aktivitas kunjungan.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            salesLogs.forEach(log => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${log.tgl || '-'}</td>
+                        <td>${log.jam || '-'}</td>
+                        <td><strong>${log.sales || '-'}</strong></td>
+                        <td>${log.kategori || '-'}${log.toko ? ' - ' + log.toko : ''}</td>
+                        <td>${log.toko || '-'}</td>
+                        <td>${log.gps || '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderSuperLogTable() {
+            const tbody = document.getElementById('superLogTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!superadminLogs || superadminLogs.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align:center;color:var(--text-muted);padding:1.5rem;">
+                            Belum ada log aktivitas admin.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            superadminLogs.forEach(log => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${log.tgl || '-'}</td>
+                        <td>${log.jam || '-'}</td>
+                        <td><strong>${log.admin || '-'}</strong></td>
+                        <td>${log.objek || '-'}</td>
+                        <td>${log.gps || '-'}</td>
+                        <td>${log.detail || '-'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderAllTables() {
+            renderPOTable();
+            renderCancelledTable();
+            renderBiayaTable();
+            renderRekapDealTable();
+            renderUserManagement();
+            renderProductTables();
+            renderSalesLogTable();
+            renderSuperLogTable();
+        }
+
+        loadProductsFromLocalStorage();
+        renderProductTables();
+        loadUsersFromSheets();
+    </script>
+</body>
+</html>
